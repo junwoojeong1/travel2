@@ -1,0 +1,60 @@
+<!doctype html>
+
+
+<div className="grid" style={{marginTop:12}}>
+<div className="card">
+<h3 className="tiny">선호도 설정</h3>
+{['culture','nature','food','budget','distance'].map(k=> (
+<div key={k} style={{marginTop:8}}>
+<label className="tiny" style={{textTransform:'capitalize'}}>{k}</label>
+<input type="range" min={1} max={10} value={prefs[k]} onChange={e=>setPrefs(p=>({...p, [k]:Number(e.target.value)}))} style={{width:'100%'}} />
+</div>
+))}
+<div style={{marginTop:8, display:'flex', gap:8}}>
+<button className="btn" onClick={generatePlan}>일정 생성</button>
+<button className="btn" onClick={()=>setDestinations(d=>[...d].sort((a,b)=>a.name.localeCompare(b.name)))}>정렬</button>
+</div>
+</div>
+<div className="card">
+<h3 className="tiny">추천 여행지</h3>
+<div style={{marginTop:8}}>
+{destinations.map(d=> (
+<div key={d.id} className="item">
+<div style={{fontWeight:600}}>{d.name}</div>
+<div className="muted tiny">{d.summary}</div>
+<div className="tiny muted">문화:{d.culture} 자연:{d.nature} 음식:{d.food} 비용:{d.cost}</div>
+</div>
+))}
+</div>
+</div>
+</div>
+
+
+<div style={{marginTop:12}} className="card">
+<h3 className="tiny">생성된 샘플 일정</h3>
+{plan ? (
+<ol style={{paddingLeft:16}}>
+{plan.map(p=> (
+<li key={p.day} style={{marginBottom:8}}>
+<div style={{fontWeight:600}}>Day {p.day} — {p.place}</div>
+<div className="muted tiny">{p.activities.join(' · ')}</div>
+</li>
+))}
+</ol>
+) : <div className="muted tiny">일정을 생성하려면 선호도를 설정하고 '일정 생성'을 누르세요.</div>}
+</div>
+</div>
+);
+}
+function sampleDestinations(){
+return [
+{id:'d1', name:'서울', summary:'도시 문화, 음식이 풍부한 대도시', culture:9, nature:3, food:10, cost:7, distance:2, foodType:'Korean BBQ'},
+{id:'d2', name:'제주', summary:'자연과 바다, 드라이브 코스가 매력', culture:6, nature:9, food:8, cost:6, distance:6, foodType:'Seafood'},
+{id:'d3', name:'교토', summary:'역사적 사찰과 전통문화', culture:10, nature:6, food:8, cost:8, distance:7, foodType:'Kaiseki'},
+{id:'d4', name:'방콕', summary:'저렴한 여행지, 다양한 길거리 음식', culture:7, nature:4, food:9, cost:4, distance:9, foodType:'Street Food'},
+];
+}
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(Destinations));
+</script>
+</body>
+</html>
