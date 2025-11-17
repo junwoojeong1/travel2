@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Travel Planner — 대표 페이지</title>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+:root{ --bg:#f6f7fb; --glass: rgba(255,255,255,0.65); --muted:#6b7280; --accent:#4f46e5 }
+html,body,#root{ height:100%; margin:0; background:linear-gradient(180deg,#fbfdff 0%, #f3f5fa 100%); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', 'Helvetica Neue', Arial; }
+.container{ max-width:1100px; margin:32px auto; padding:28px; }
+.card{ background:var(--glass); border-radius:28px; padding:20px; box-shadow: 0 8px 30px rgba(15,23,42,0.08); backdrop-filter: blur(8px) saturate(120%); -webkit-backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.6); }
+h1{ margin:0; font-size:20px }
+p.lead{ color:var(--muted); margin:6px 0 12px 0; font-size:13px }
+.row{ display:flex; gap:12px; align-items:center }
+.nav{ display:flex; gap:8px }
+.btn{ background:white; padding:8px 14px; border-radius:999px; border:1px solid rgba(0,0,0,0.06); cursor:pointer; box-shadow:0 2px 6px rgba(2,6,23,0.06); }
+.btn.primary{ background:linear-gradient(180deg,#eef2ff,#eef3ff); border:0; color:var(--accent); font-weight:600 }
+.muted{ color:var(--muted); font-size:13px }
+.tiny{ font-size:12px }
+a.link{ text-decoration:none }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+function Home(){
+const [message, setMessage] = useState('안녕하세요');
+const [dates, setDates] = useState({from:'', to:''});
+return (
+<div className="container">
+<div className="row" style={{justifyContent:'space-between', alignItems:'flex-start'}}>
+<div>
+<h1>Travel Planner</h1>
+<p className="lead">여행 계획 — 각 세부 페이지가 별도 HTML 파일로 분리되어 있습니다.</p>
+</div>
+<div className="nav">
+<a className="link" href="flights.html"><button className="btn primary">항공편 계획</button></a>
+<a className="link" href="accommodation.html"><button className="btn">숙박·기타</button></a>
+<a className="link" href="destinations.html"><button className="btn">여행지 계획</button></a>
+<a className="link" href="courses.html"><button className="btn">코스 제작</button></a>
+</div>
+</div>
+
+
+<div style={{marginTop:18}} className="card">
+<h2>대표 페이지</h2>
+<p className="muted">여행 기본 정보를 입력하세요. (기본 메시지 '안녕하세요')</p>
+<div style={{marginTop:12}}>
+<label className="tiny">여행 시작일</label>
+<input className="input" type="date" value={dates.from} onChange={e=>setDates(d=>({...d, from:e.target.value}))} />
+<label className="tiny" style={{marginTop:8}}>여행 종료일</label>
+<input className="input" type="date" value={dates.to} onChange={e=>setDates(d=>({...d, to:e.target.value}))} />
+---
