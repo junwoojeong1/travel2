@@ -1,0 +1,70 @@
+<!doctype html>
+const pts = points.map(p=>({...p, lat:Number(p.lat), lng:Number(p.lng)}));
+let current = pts[0]; const visited=[current]; const remaining = pts.slice(1);
+function dist(a,b){ const dx=a.lat-b.lat; const dy=a.lng-b.lng; return Math.sqrt(dx*dx+dy*dy); }
+while(remaining.length){ let nearestIdx=0; let nearestD=dist(current,remaining[0]); for(let i=1;i<remaining.length;i++){ const d = dist(current, remaining[i]); if(d<nearestD){ nearestD=d; nearestIdx=i; } } current = remaining.splice(nearestIdx,1)[0]; visited.push(current); }
+visited.sort((a,b)=>Number(b.priority)-Number(a.priority)); setRoute(visited);
+}
+function estimateTotalDuration(order){ if(!order) return 0; return order.reduce((s,p)=>s + (Number(p.duration)||0),0); }
+function exportJSON(){ const blob = new Blob([JSON.stringify({points,route},null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='course-plan.json'; a.click(); URL.revokeObjectURL(url); }
+return (
+<div className="container">
+<div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+<h1>코스 제작</h1>
+<div style={{display:'flex', gap:8}}>
+<a className="link" href="index.html"><button className="btn">홈으로</button></a>
+<a className="link" href="destinations.html"><button className="btn">여행지</button></a>
+</div>
+</div>
+<div className="card" style={{marginTop:12}}>
+<p className="muted">좌표가 있으면 더 좋아요 — 간단한 자동 코스 생성 알고리즘 포함</p>
+<form onSubmit={addPoint} style={{marginTop:10}} className="grid">
+<input className="input" placeholder="명소명" value={form.name} onChange={e=>setForm(f=>({...f, name:e.target.value}))} />
+<input className="input" placeholder="lat (선택)" value={form.lat} onChange={e=>setForm(f=>({...f, lat:e.target.value}))} />
+<input className="input" placeholder="lng (선택)" value={form.lng} onChange={e=>setForm(f=>({...f, lng:e.target.value}))} />
+<input className="input" placeholder="체류시간(분)" value={form.duration} onChange={e=>setForm(f=>({...f, duration:e.target.value}))} />
+<input className="input" placeholder="우선순위(1-10)" value={form.priority} onChange={e=>setForm(f=>({...f, priority:e.target.value}))} />
+<div style={{display:'flex', gap:8, marginTop:8}}>
+<button className="btn" type="submit">명소 추가</button>
+<button type="button" className="btn" onClick={nearestNeighborRoute}>자동 코스 생성</button>
+<button type="button" className="btn" onClick={exportJSON}>JSON 내보내기</button>
+</div>
+</form>
+<div style={{marginTop:12}}>
+<h3 className="tiny">명소 목록 (드래그로 순서 변경)</h3>
+<div style={{marginTop:8}}>
+{points.map((p,i)=> (
+<div key={p.id} draggable className="item" onDragStart={e=>onDragStart(e,i)} onDragOver={onDragOver} onDrop={e=>onDrop(e,i)}>
+<div>
+<div style={{fontWeight:600}}>{p.name}</div>
+<div className="muted tiny">체류: {p.duration}분 · 우선순위: {p.priority} · {p.lat && p.lng ? `(${p.lat}, ${p.lng})` : '좌표없음'}</div>
+</div>
+<div style={{display:'flex', gap:8}}>
+<button className="pill" onClick={()=>setPoints(prev=>prev.filter(x=>x.id!==p.id))}>삭제</button>
+</div>
+</div>
+))}
+</div>
+<div className="card" style={{marginTop:10}}>
+<h4 className="tiny">자동 생성된 코스 / 현재 코스</h4>
+{route ? (
+<ol style={{paddingLeft:16}}>
+{route.map(r=> (
+<li key={r.id} style={{marginBottom:6}}>
+<div style={{fontWeight:600}}>{r.name}</div>
+<div className="muted tiny">예상 체류: {r.duration}분 · 우선순위: {r.priority}</div>
+</li>
+))}
+</ol>
+) : <div className="muted tiny">코스가 아직 생성되지 않았습니다.</div>}
+<div className="muted tiny" style={{marginTop:8}}>총 예상 체류 시간: {estimateTotalDuration(route)} 분</div>
+</div>
+</div>
+</div>
+</div>
+);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(Courses));
+</script>
+</body>
+</html>
